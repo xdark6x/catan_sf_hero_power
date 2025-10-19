@@ -22,7 +22,7 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
@@ -47,11 +47,16 @@
         
         .voting-info {
             background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
             margin-bottom: 30px;
             text-align: center;
             border: 1px solid rgba(64, 224, 255, 0.3);
+            line-height: 1.8;
+        }
+        
+        .voting-info p {
+            margin-bottom: 10px;
         }
         
         .status-message {
@@ -83,15 +88,15 @@
         
         .powers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
             margin-top: 30px;
         }
         
         .power-card {
             background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%);
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             border: 1px solid rgba(64, 224, 255, 0.2);
             transition: all 0.3s ease;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
@@ -105,34 +110,42 @@
         
         .power-name {
             font-weight: bold;
-            font-size: 1.4em;
-            margin-bottom: 15px;
+            font-size: 1.5em;
+            margin-bottom: 20px;
             color: #40e0ff;
             text-shadow: 0 0 10px rgba(64, 224, 255, 0.3);
         }
         
         .power-image {
             width: 100%;
-            height: 200px;
+            height: 280px;
             object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
             border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .power-image:hover {
+            border-color: rgba(64, 224, 255, 0.5);
+            transform: scale(1.02);
         }
         
         .power-description {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: #d0d0d0;
-            font-size: 0.95em;
-            line-height: 1.5;
+            font-size: 1em;
+            line-height: 1.6;
         }
         
         .voting-section {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
+            align-items: flex-start;
+            padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 20px;
         }
         
         .vote-category {
@@ -142,30 +155,30 @@
         
         .vote-category h4 {
             color: #b0b0b0;
-            font-size: 0.9em;
-            margin-bottom: 8px;
+            font-size: 1em;
+            margin-bottom: 12px;
         }
         
         .vote-buttons {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             justify-content: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
         
         .vote-btn {
             background: linear-gradient(45deg, #4a5568, #2d3748);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 12px;
-            border-radius: 20px;
+            padding: 10px 15px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 1em;
             transition: all 0.3s ease;
-            min-width: 40px;
+            min-width: 50px;
         }
         
-        .vote-btn:hover {
+        .vote-btn:hover:not(:disabled) {
             background: linear-gradient(45deg, #40e0ff, #ff40a0);
             border-color: #40e0ff;
             transform: scale(1.05);
@@ -180,56 +193,68 @@
             box-shadow: none;
         }
         
-        .vote-count {
-            font-size: 0.85em;
-            color: #90cdf4;
+        .vote-counts {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        
+        .upvote-count {
+            color: #68d391;
             font-weight: bold;
         }
         
-        .stats-panel {
-            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(64, 224, 255, 0.3);
+        .downvote-count {
+            color: #fc8181;
+            font-weight: bold;
         }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+        .vote-limit {
+            font-size: 0.8em;
+            color: #718096;
         }
         
-        .stat-item {
-            text-align: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
+        /* Modal for enlarged images */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            cursor: pointer;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 90%;
+            max-height: 90%;
+        }
+        
+        .modal-image {
+            width: 100%;
+            height: auto;
             border-radius: 10px;
         }
         
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #40e0ff;
-        }
-        
-        .stat-label {
-            color: #b0b0b0;
-            font-size: 0.9em;
-        }
-        
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .powers-grid {
                 grid-template-columns: 1fr;
             }
             
             h1 {
-                font-size: 2em;
+                font-size: 2.2em;
             }
             
             .voting-section {
                 flex-direction: column;
-                gap: 15px;
+                gap: 20px;
             }
         }
     </style>
@@ -240,33 +265,14 @@
         <div class="subtitle">Community Voting Platform</div>
         
         <div class="voting-info">
-            <p>🗳️ Vote for your favorite hero power images and rule descriptions! Each category is voted on separately.</p>
-            <p>🔒 One vote per category per session to ensure fair results.</p>
+            <p>🛸 <strong>40 Unique Alien Hero Powers</strong> for your Catan adventures!</p>
+            <p>🗳️ Vote for your favorite hero power images and rule descriptions! Each category is voted separately.</p>
+            <p>🎯 Up to <strong>3 votes per category</strong> per power - vote strategically!</p>
+            <p>🔒 Session-based tracking ensures fair voting across all participants.</p>
         </div>
         
         <div id="statusMessage" class="status-message status-loading">
             Initializing voting system...
-        </div>
-        
-        <div id="statsPanel" class="stats-panel" style="display: none;">
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div id="totalImageVotes" class="stat-number">0</div>
-                    <div class="stat-label">Image Votes</div>
-                </div>
-                <div class="stat-item">
-                    <div id="totalRuleVotes" class="stat-number">0</div>
-                    <div class="stat-label">Rule Votes</div>
-                </div>
-                <div class="stat-item">
-                    <div id="totalPowers" class="stat-number">40</div>
-                    <div class="stat-label">Hero Powers</div>
-                </div>
-                <div class="stat-item">
-                    <div id="yourVotes" class="stat-number">0</div>
-                    <div class="stat-label">Your Votes</div>
-                </div>
-            </div>
         </div>
         
         <div id="powersContainer" class="powers-grid">
@@ -274,8 +280,15 @@
         </div>
     </div>
 
+    <!-- Modal for enlarged images -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <img id="modalImage" class="modal-image" src="" alt="">
+        </div>
+    </div>
+
     <script>
-        // Supabase configuration - CORRECTED with proper quotes
+        // Supabase configuration
         const SUPABASE_URL = 'https://udiaqtjjsspfznxeszyy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkaWFxdGpqc3NwZnpueGVzenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4NzM4NDEsImV4cCI6MjA3NjQ0OTg0MX0.BM44McTQH2UZBfdpRLnOBtMmes7oZX_S46RdYfgAh9Q';
         
@@ -289,8 +302,8 @@
             localStorage.setItem('catan_voting_session', sessionId);
         }
         
-        // Track user votes in this session
-        let userVotes = JSON.parse(localStorage.getItem('catan_user_votes') || '{"image": [], "rules": []}');
+        // Track user votes in this session - FIXED: separate tracking for image and rules
+        let userVotes = JSON.parse(localStorage.getItem('catan_user_votes') || '{}');
         
         // Hero powers data
         const powers = [
@@ -336,24 +349,38 @@
             {name: "Chaos Weaver", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/31ada591-e827-436c-ba33-4e16e50f50d6.png", description: "Twice per game, after any player rolls, you may force them to reroll both dice. The new result stands."}
         ];
         
-        // Vote counts (will be loaded from Supabase)
+        // Vote counts (will be loaded from Supabase) - UPDATED: separate up/down counts
         let voteCounts = {};
+        
+        // Initialize user votes structure for each power
+        function initializeUserVotes() {
+            powers.forEach(power => {
+                if (!userVotes[power.name]) {
+                    userVotes[power.name] = {
+                        image_up: 0,
+                        image_down: 0,
+                        rules_up: 0,
+                        rules_down: 0
+                    };
+                }
+            });
+            localStorage.setItem('catan_user_votes', JSON.stringify(userVotes));
+        }
         
         // Initialize the app
         async function initApp() {
             try {
+                initializeUserVotes();
                 await loadVotes();
                 renderPowers();
-                updateStats();
                 showMessage('Voting system ready! Cast your votes below.', 'success');
-                document.getElementById('statsPanel').style.display = 'block';
             } catch (error) {
                 console.error('Initialization error:', error);
                 showMessage('Error initializing voting system. Please refresh the page.', 'error');
             }
         }
         
-        // Load existing votes from Supabase
+        // Load existing votes from Supabase - UPDATED: separate up/down aggregation
         async function loadVotes() {
             const { data, error } = await supabase
                 .from('votes')
@@ -361,22 +388,27 @@
             
             if (error) {
                 console.error('Error loading votes:', error);
-                // Initialize empty vote counts if table doesn't exist yet
                 initializeEmptyVotes();
                 return;
             }
             
-            // Initialize vote counts
+            // Initialize vote counts with separate up/down counters
             voteCounts = {};
             powers.forEach(power => {
-                voteCounts[power.name] = { image: 0, rules: 0 };
+                voteCounts[power.name] = { 
+                    image_up: 0, 
+                    image_down: 0, 
+                    rules_up: 0, 
+                    rules_down: 0 
+                };
             });
             
-            // Aggregate votes
+            // Aggregate votes - FIXED: separate up and down counts
             if (data) {
                 data.forEach(vote => {
                     if (voteCounts[vote.power_name]) {
-                        voteCounts[vote.power_name][vote.vote_type] += vote.vote_value;
+                        const key = vote.vote_type + (vote.vote_value > 0 ? '_up' : '_down');
+                        voteCounts[vote.power_name][key] += Math.abs(vote.vote_value);
                     }
                 });
             }
@@ -386,15 +418,24 @@
         function initializeEmptyVotes() {
             voteCounts = {};
             powers.forEach(power => {
-                voteCounts[power.name] = { image: 0, rules: 0 };
+                voteCounts[power.name] = { 
+                    image_up: 0, 
+                    image_down: 0, 
+                    rules_up: 0, 
+                    rules_down: 0 
+                };
             });
         }
         
-        // Cast a vote
+        // Cast a vote - UPDATED: check specific vote type limits
         async function castVote(powerName, voteType, voteValue) {
-            // Check if user already voted for this power/type
-            if (userVotes[voteType].includes(powerName)) {
-                showMessage(`You already voted for ${powerName}'s ${voteType}!`, 'error');
+            const voteKey = voteType + (voteValue > 0 ? '_up' : '_down');
+            
+            // Check if user has reached the limit for this specific vote type (3 votes max)
+            if (userVotes[powerName][voteKey] >= 3) {
+                const voteTypeText = voteType === 'image' ? 'Image' : 'Rule';
+                const directionText = voteValue > 0 ? 'upvotes' : 'downvotes';
+                showMessage(`You've already cast 3 ${directionText} for ${powerName}'s ${voteTypeText}!`, 'error');
                 return;
             }
             
@@ -418,16 +459,13 @@
                     return;
                 }
                 
-                // Update local vote count
-                voteCounts[powerName][voteType] += voteValue;
-                
-                // Mark as voted locally
-                userVotes[voteType].push(powerName);
+                // Update local vote counts
+                voteCounts[powerName][voteKey] += 1;
+                userVotes[powerName][voteKey] += 1;
                 localStorage.setItem('catan_user_votes', JSON.stringify(userVotes));
                 
                 // Re-render the specific power card
                 renderPowerCard(powerName);
-                updateStats();
                 
                 showMessage(`Vote submitted for ${powerName}!`, 'success');
                 
@@ -447,7 +485,7 @@
             });
         }
         
-        // Render individual power card
+        // Render individual power card - UPDATED: separate up/down vote display and limits
         function renderPowerCard(powerName, container = null) {
             const power = powers.find(p => p.name === powerName);
             if (!power) return;
@@ -456,37 +494,45 @@
                 container = document.getElementById('powersContainer');
             }
             
-            const counts = voteCounts[power.name] || { image: 0, rules: 0 };
-            const hasVotedImage = userVotes.image.includes(power.name);
-            const hasVotedRules = userVotes.rules.includes(power.name);
+            const counts = voteCounts[power.name] || { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 };
+            const userCount = userVotes[power.name] || { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 };
             
             const powerCard = document.createElement('div');
             powerCard.className = 'power-card';
             powerCard.innerHTML = `
                 <div class="power-name">${power.name}</div>
                 <img class="power-image" src="${power.image}" alt="${power.name}" 
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
+                     onclick="openImageModal('${power.image}', '${power.name}')"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
                 <div class="power-description">${power.description}</div>
                 <div class="voting-section">
                     <div class="vote-category">
                         <h4>Image Quality</h4>
                         <div class="vote-buttons">
                             <button class="vote-btn" onclick="castVote('${power.name}', 'image', 1)" 
-                                    ${hasVotedImage ? 'disabled' : ''}>👍 +1</button>
+                                    ${userCount.image_up >= 3 ? 'disabled' : ''}>👍 +1</button>
                             <button class="vote-btn" onclick="castVote('${power.name}', 'image', -1)" 
-                                    ${hasVotedImage ? 'disabled' : ''}>👎 -1</button>
+                                    ${userCount.image_down >= 3 ? 'disabled' : ''}>👎 -1</button>
                         </div>
-                        <div class="vote-count">Score: ${counts.image}</div>
+                        <div class="vote-counts">
+                            <span class="upvote-count">👍 ${counts.image_up}</span>
+                            <span class="downvote-count">👎 ${counts.image_down}</span>
+                        </div>
+                        <div class="vote-limit">Your votes: +${userCount.image_up}/3, -${userCount.image_down}/3</div>
                     </div>
                     <div class="vote-category">
                         <h4>Rule Design</h4>
                         <div class="vote-buttons">
                             <button class="vote-btn" onclick="castVote('${power.name}', 'rules', 1)" 
-                                    ${hasVotedRules ? 'disabled' : ''}>👍 +1</button>
+                                    ${userCount.rules_up >= 3 ? 'disabled' : ''}>👍 +1</button>
                             <button class="vote-btn" onclick="castVote('${power.name}', 'rules', -1)" 
-                                    ${hasVotedRules ? 'disabled' : ''}>👎 -1</button>
+                                    ${userCount.rules_down >= 3 ? 'disabled' : ''}>👎 -1</button>
                         </div>
-                        <div class="vote-count">Score: ${counts.rules}</div>
+                        <div class="vote-counts">
+                            <span class="upvote-count">👍 ${counts.rules_up}</span>
+                            <span class="downvote-count">👎 ${counts.rules_down}</span>
+                        </div>
+                        <div class="vote-limit">Your votes: +${userCount.rules_up}/3, -${userCount.rules_down}/3</div>
                     </div>
                 </div>
             `;
@@ -501,16 +547,19 @@
             }
         }
         
-        // Update statistics panel
-        function updateStats() {
-            const totalImageVotes = Object.values(voteCounts).reduce((sum, counts) => sum + Math.abs(counts.image), 0);
-            const totalRuleVotes = Object.values(voteCounts).reduce((sum, counts) => sum + Math.abs(counts.rules), 0);
-            const yourVotes = userVotes.image.length + userVotes.rules.length;
-            
-            document.getElementById('totalImageVotes').textContent = totalImageVotes;
-            document.getElementById('totalRuleVotes').textContent = totalRuleVotes;
-            document.getElementById('yourVotes').textContent = yourVotes;
+        // Image modal functionality
+        function openImageModal(imageSrc, altText) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = imageSrc;
+            modalImg.alt = altText;
         }
+        
+        // Close modal when clicking outside
+        document.getElementById('imageModal').addEventListener('click', function() {
+            this.style.display = 'none';
+        });
         
         // Show status message
         function showMessage(message, type) {
