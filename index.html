@@ -6,572 +6,212 @@
     <title>Sci-Fi Hero Powers for Catan - Community Voting</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0c0c1d 0%, #1a1a2e 50%, #16213e 100%);
-            color: #e0e0e0;
-            padding: 20px;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 10px;
-            color: #ffffff;
-            font-size: 2.8em;
-            text-shadow: 0 0 20px rgba(64, 224, 255, 0.5);
-            background: linear-gradient(45deg, #40e0ff, #ff40a0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .subtitle {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #b0b0b0;
-            font-size: 1.2em;
-        }
-        
-        .voting-info {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            text-align: center;
-            border: 1px solid rgba(64, 224, 255, 0.3);
-            line-height: 1.8;
-        }
-        
-        .voting-info p {
-            margin-bottom: 10px;
-        }
-        
-        .status-message {
-            text-align: center;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        .status-loading {
-            background: linear-gradient(45deg, #2d3748, #4a5568);
-            color: #90cdf4;
-            border: 1px solid #63b3ed;
-        }
-        
-        .status-success {
-            background: linear-gradient(45deg, #2d5016, #38a169);
-            color: #9ae6b4;
-            border: 1px solid #68d391;
-        }
-        
-        .status-error {
-            background: linear-gradient(45deg, #742a2a, #e53e3e);
-            color: #fc8181;
-            border: 1px solid #f56565;
-        }
-        
-        .powers-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            margin-top: 30px;
-        }
-        
-        .power-card {
-            background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%);
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid rgba(64, 224, 255, 0.2);
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .power-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(64, 224, 255, 0.5);
-            box-shadow: 0 10px 30px rgba(64, 224, 255, 0.2);
-        }
-        
-        .power-name {
-            font-weight: bold;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: #40e0ff;
-            text-shadow: 0 0 10px rgba(64, 224, 255, 0.3);
-        }
-        
-        .power-image {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .power-image:hover {
-            border-color: rgba(64, 224, 255, 0.5);
-            transform: scale(1.02);
-        }
-        
-        .power-description {
-            margin-bottom: 25px;
-            color: #d0d0d0;
-            font-size: 1em;
-            line-height: 1.6;
-        }
-        
-        .voting-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            gap: 20px;
-        }
-        
-        .vote-category {
-            text-align: center;
-            flex: 1;
-        }
-        
-        .vote-category h4 {
-            color: #b0b0b0;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        .vote-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-        
-        .vote-btn {
-            background: linear-gradient(45deg, #4a5568, #2d3748);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 12px 18px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            min-width: 60px;
-            position: relative;
-        }
-        
-        .vote-btn:hover:not(:disabled) {
-            background: linear-gradient(45deg, #40e0ff, #ff40a0);
-            border-color: #40e0ff;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(64, 224, 255, 0.6);
-        }
-        
-        .vote-btn:disabled {
-            background: #2a2a2a;
-            color: #666;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .vote-btn.voting {
-            animation: flash 0.3s ease-in-out;
-        }
-        
-        @keyframes flash {
-            0% { background: linear-gradient(45deg, #4a5568, #2d3748); }
-            50% { background: linear-gradient(45deg, #40e0ff, #ff40a0); transform: scale(1.1); }
-            100% { background: linear-gradient(45deg, #4a5568, #2d3748); }
-        }
-        
-        .vote-counts {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-        
-        .upvote-count, .downvote-count {
-            font-weight: bold;
-            font-size: 1.2em;
-            padding: 5px 10px;
-            border-radius: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        .upvote-count {
-            color: #68d391;
-            background: rgba(104, 211, 145, 0.1);
-        }
-        
-        .downvote-count {
-            color: #fc8181;
-            background: rgba(252, 129, 129, 0.1);
-        }
-        
-        .vote-limit {
-            font-size: 0.9em;
-            color: #718096;
-            font-weight: 500;
-        }
-        
-        /* Modal for enlarged images */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            cursor: pointer;
-        }
-        
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 90%;
-            max-height: 90%;
-        }
-        
-        .modal-image {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-        }
-        
-        @media (max-width: 900px) {
-            .powers-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            h1 {
-                font-size: 2.2em;
-            }
-            
-            .voting-section {
-                flex-direction: column;
-                gap: 20px;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0c0c1d 0%, #1a1a2e 50%, #16213e 100%); color: #e0e0e0; padding: 20px; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; color: #ffffff; font-size: 2.8em; text-shadow: 0 0 20px rgba(64, 224, 255, 0.5); background: linear-gradient(45deg, #40e0ff, #ff40a0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .subtitle { text-align: center; margin-bottom: 30px; color: #b0b0b0; font-size: 1.2em; }
+        .voting-info { background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 30px; text-align: center; border: 1px solid rgba(64, 224, 255, 0.3); line-height: 1.8; }
+        .voting-info p { margin-bottom: 10px; }
+        .status-message { text-align: center; padding: 15px; margin-bottom: 20px; border-radius: 10px; font-weight: bold; transition: all 0.3s ease; }
+        .status-loading { background: linear-gradient(45deg, #2d3748, #4a5568); color: #90cdf4; border: 1px solid #63b3ed; }
+        .status-success { background: linear-gradient(45deg, #2d5016, #38a169); color: #9ae6b4; border: 1px solid #68d391; }
+        .status-error { background: linear-gradient(45deg, #742a2a, #e53e3e); color: #fc8181; border: 1px solid #f56565; }
+        .powers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 30px; }
+        .power-card { background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%); border-radius: 15px; padding: 25px; border: 1px solid rgba(64, 224, 255, 0.2); transition: all 0.3s ease; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); }
+        .power-card:hover { transform: translateY(-5px); border-color: rgba(64, 224, 255, 0.5); box-shadow: 0 10px 30px rgba(64, 224, 255, 0.2); }
+        .power-name { font-weight: bold; font-size: 1.5em; margin-bottom: 20px; color: #40e0ff; text-shadow: 0 0 10px rgba(64, 224, 255, 0.3); }
+        .power-image { width: 100%; height: 280px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; border: 2px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: all 0.3s ease; }
+        .power-image:hover { border-color: rgba(64, 224, 255, 0.5); transform: scale(1.02); }
+        .power-description { margin-bottom: 25px; color: #d0d0d0; font-size: 1em; line-height: 1.6; }
+        .voting-section { display: flex; justify-content: space-between; align-items: flex-start; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); gap: 20px; }
+        .vote-category { text-align: center; flex: 1; }
+        .vote-category h4 { color: #b0b0b0; font-size: 1.1em; margin-bottom: 15px; font-weight: 600; }
+        .vote-buttons { display: flex; gap: 12px; justify-content: center; margin-bottom: 15px; }
+        .vote-btn { background: linear-gradient(45deg, #4a5568, #2d3748); color: white; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 18px; border-radius: 25px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s ease; min-width: 60px; position: relative; }
+        .vote-btn:hover:not(:disabled) { background: linear-gradient(45deg, #40e0ff, #ff40a0); border-color: #40e0ff; transform: scale(1.05); box-shadow: 0 0 20px rgba(64, 224, 255, 0.6); }
+        .vote-btn:disabled { background: #2a2a2a; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
+        .vote-btn.voting { animation: flash 0.3s ease-in-out; }
+        @keyframes flash { 0% { background: linear-gradient(45deg, #4a5568, #2d3748); } 50% { background: linear-gradient(45deg, #40e0ff, #ff40a0); transform: scale(1.1); } 100% { background: linear-gradient(45deg, #4a5568, #2d3748); } }
+        .vote-counts { display: flex; justify-content: space-between; font-size: 1.1em; margin-bottom: 10px; }
+        .upvote-count, .downvote-count { font-weight: bold; font-size: 1.2em; padding: 5px 10px; border-radius: 15px; transition: all 0.3s ease; }
+        .upvote-count { color: #68d391; background: rgba(104, 211, 145, 0.1); }
+        .downvote-count { color: #fc8181; background: rgba(252, 129, 129, 0.1); }
+        .vote-limit { font-size: 0.9em; color: #718096; font-weight: 500; margin-bottom: 8px; }
+        .undo-btn { background: linear-gradient(45deg, #805ad5, #553c9a); color: white; border: none; padding: 6px 12px; border-radius: 15px; cursor: pointer; font-size: 0.8em; transition: all 0.3s ease; margin-top: 5px; }
+        .undo-btn:hover:not(:disabled) { background: linear-gradient(45deg, #9f7aea, #805ad5); transform: scale(1.05); }
+        .undo-btn:disabled { background: #2a2a2a; color: #666; cursor: not-allowed; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); cursor: pointer; }
+        .modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; max-height: 90%; }
+        .modal-image { width: 100%; height: auto; border-radius: 10px; }
+        @media (max-width: 900px) { .powers-grid { grid-template-columns: 1fr; } h1 { font-size: 2.2em; } .voting-section { flex-direction: column; gap: 20px; } }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Sci-Fi Hero Powers for Catan</h1>
         <div class="subtitle">Community Voting Platform</div>
-        
         <div class="voting-info">
             <p>🛸 <strong>40 Unique Alien Hero Powers</strong> for your Catan adventures!</p>
             <p>🗳️ Vote for your favorite hero power images and rule descriptions! Each category is voted separately.</p>
             <p>🎯 Up to <strong>3 votes per section</strong> per power - choose wisely between upvotes and downvotes!</p>
+            <p>🔄 <strong>NEW:</strong> Undo your last vote in each section if you change your mind!</p>
             <p>🔒 Session-based tracking ensures fair voting across all participants.</p>
         </div>
-        
-        <div id="statusMessage" class="status-message status-loading">
-            Initializing voting system...
-        </div>
-        
-        <div id="powersContainer" class="powers-grid">
-            <!-- Powers will be loaded here -->
-        </div>
+        <div id="statusMessage" class="status-message status-loading">Initializing voting system...</div>
+        <div id="powersContainer" class="powers-grid"></div>
     </div>
 
-    <!-- Modal for enlarged images -->
-    <div id="imageModal" class="modal">
-        <div class="modal-content">
-            <img id="modalImage" class="modal-image" src="" alt="">
-        </div>
-    </div>
+    <div id="imageModal" class="modal"><div class="modal-content"><img id="modalImage" class="modal-image" src="" alt=""></div></div>
 
     <script>
-        // Supabase configuration
         const SUPABASE_URL = 'https://udiaqtjjsspfznxeszyy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkaWFxdGpqc3NwZnpueGVzenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4NzM4NDEsImV4cCI6MjA3NjQ0OTg0MX0.BM44McTQH2UZBfdpRLnOBtMmes7oZX_S46RdYfgAh9Q';
-        
-        // Initialize Supabase client
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        // Generate session ID for duplicate vote prevention
+
         let sessionId = localStorage.getItem('catan_voting_session');
-        if (!sessionId) {
-            sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('catan_voting_session', sessionId);
-        }
-        
-        // Track user votes in this session - FIXED: proper section-based tracking
+        if (!sessionId) { sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('catan_voting_session', sessionId); }
+
         let userVotes = JSON.parse(localStorage.getItem('catan_user_votes') || '{}');
-        
-        // Hero powers data
-        const powers = [/* truncated in this message for brevity; using existing list from repo */];
-        
-        // Vote counts (will be loaded from Supabase)
+        let voteHistory = JSON.parse(localStorage.getItem('catan_vote_history') || '{}');
+
+        const powers = [
+            {name: "Quantum Harvester", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/09386ab1-4d87-446e-b683-915d04b69a19.png", description: "Once per turn, you may reroll both dice if the result is 5 or less."},
+            {name: "Temporal Flux", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/fe0d7ce4-23e3-417f-bd6f-ce6a275ab5f6.png", description: "Once per game, take an extra turn immediately after your current turn."},
+            {name: "Nanoswarm Constructor", image: "https://user-gen-media-assets.s3.amazonaws.com/gemini_images/0ca377e4-1d50-45f8-b4e6-e35108b361de.png", description: "Once per turn, when you build a road, you may build a second connecting road for half the normal cost."},
+            {name: "Asteroid Miner", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/4ffa805a-45e1-47aa-bfbd-48163d2b6b2f.png", description: "Whenever you roll an 8, gain 1 additional resource of any type."},
+            {name: "Warp Conduit", image: "https://user-gen-media-assets.s3.amazonaws.com/gemini_images/db5234db-b50d-4f03-b969-51969bd63c49.png", description: "Your roads count as 2 segments each for longest road calculations."},
+            {name: "Holographic Archive", image: "https://user-gen-media-assets.s3.amazonaws.com/gemini_images/e439d6d1-9b06-485f-932a-996055b94407.png", description: "Start with 1 additional development card and may hold up to 8 cards in hand."},
+            {name: "Graviton Manipulator", image: "https://user-gen-media-assets.s3.amazonaws.com/gemini_images/78151f5a-54bd-45de-be5f-ee6bb08078d6.png", description: "Before your roll, you may change one hex number token to any number 2-12."},
+            {name: "Solar Collector", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/05121614-3179-4e13-b97f-56d551be2faf.png", description: "Gain 1 wheat every other turn (starting from your second turn)."},
+            {name: "Cryo Stasis", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/ee682ed8-c873-4fde-80dd-59711982fa5e.png", description: "You are immune to having resources stolen by other players."},
+            {name: "Antimatter Core", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/212af6a4-92f2-4f0d-8e7a-1126b78b0263.png", description: "First city you build produces 3 resources instead of 2."},
+            {name: "Plasma Lance", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/23c9e0d4-9455-4b34-acfd-d6537581d73c.png", description: "When using the robber, steal 2 cards from the target and give them 1 card back (it can be from your hand)."},
+            {name: "Dome Shield", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/3f2f3018-a028-4c84-af45-634f708767cc.png", description: "Your cities will not be affected by robbers from other players' development cards."},
+            {name: "Hivemind Nexus", image: "https://user-gen-media-assets.s3.amazonaws.com/gemini_images/2aeb8b2e-e14e-48c4-8382-c3ff9f4eb21b.png", description: "When you gain development cards, draw 2 and keep 1."},
+            {name: "Matter Forge", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/1f45dc16-1557-46c2-ada7-fee05db90c2d.png", description: "Once per turn, convert 2 of any resource into 1 of any other resource."},
+            {name: "EMP Burst", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/bb104ee3-e13d-4e04-99cd-a02cecc01e04.png", description: "Once per game, force all players to discard all cards from their hand."},
+            {name: "Psi Amplifier", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/9bfd242b-85a0-4507-974d-463266efc78a.png", description: "Once per turn, look at another player's hand and development cards."},
+            {name: "Fusion Core", image: "https://user-gen-media-assets.s3.amazonaws.com/gemini_images/e2e952de-2b90-43d0-8df9-bcaf583c500d.png", description: "When you roll doubles, gain 1 additional resource from any hex of the number that was rolled."},
+            {name: "Orbital Habitat", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/924d7c8a-6b07-40d9-badd-4354355d35e5.png", description: "Settlements on the ocean give you any resource at 3 and 11."},
+            {name: "Trade Consortium", image: "https://user-gen-media-assets.s3.amazonaws.com/gemini_images/8989806d-1835-4d24-87fc-cdc95a74a2b0.png", description: "When any two players trade, roll a dice. On 6, 7, or 8, take 1 resource from the bank."},
+            {name: "Drone Swarm", image: "https://user-gen-media-assets.s3.amazonaws.com/gemini_images/92897e26-4be5-4bb1-97dd-c978dfb6ca4e.png", description: "Build settlements for 3 resources instead of 4."},
+            {name: "Deep Scanner", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/e8280b1b-0398-4093-832e-e9b00a037df7.png", description: "Whenever opponents draw development cards: Look at the top 2 development cards. Rearrange them in any order."},
+            {name: "Recycler", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/fca0de07-cca6-41e9-b42e-11fea951935b.png", description: "Gain all resources other players discard due to rolling a 7 (after discarding your own cards if necessary)."},
+            {name: "Oracle Vision", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/f5928a7e-8368-4832-b762-fb6befa79ef3.png", description: "When any opponent announces upgrading a settlement to a city, predict the location in secret. If correct, gain 1 copy of all resources adjacent to that location."},
+            {name: "Alliance Network", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/dbc55275-0c9e-4761-892e-462d2b1e5c73.png", description: "Choose a player at game start. Both of you gain +1 resource whenever the other builds a settlement or city. Change partners once per game."},
+            {name: "Pioneer", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/32a0e59d-8add-4d18-95f9-eac57b06c91c.png", description: "Your first settlement each game costs nothing."},
+            {name: "Tactician", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/e7762a69-5ef9-429f-952f-38367bad8e35.png", description: "You may move the robber to any hex, even if a 7 wasn't rolled, twice per game on your turn."},
+            {name: "Hex Shifter", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/213790c6-9c1c-44f9-b397-1eb246534190.png", description: "Once per game, after both longest road and largest army cards have been claimed, you may swap the positions of any two hexes on the board (including their number tokens)."},
+            {name: "Card Duplicator", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/0f45c168-e521-473d-ab74-11ce5142468f.png", description: "When you play a development card (except victory point cards), roll a die. On 6, 7, or 8, you may play it again. If you roll 7, you may keep rolling and duplicating."},
+            {name: "Port Master", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/a4fa3f51-7458-4ac0-abbd-a226a6692e9c.png", description: "2 for 1 ports with the bank are for you 1 for 1."},
+            {name: "City Planner", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/ca7b6f88-baa1-44d8-9287-ce9d9a918796.png", description: "You may build The Plan (new building). Cost: 1 of each resource. Upgrade from settlement (only 1 per game). Worth 3 VP. Produces 1 of each resource. Immediately draw 3 development cards."},
+            {name: "Void Walker", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/a61a2a45-0d7c-4e74-9c01-cb807452a199.png", description: "Once per game, after both longest road and largest army cards have been claimed, change the number of a hex to 0. This hex will no longer produce anything for the rest of the game."},
+            {name: "Plague Carrier", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/1b21e07d-7e63-42fd-8a37-acff91d91197.png", description: "When you place the robber on a hex, that hex won't produce any resources after the robber moves until your next turn."},
+            {name: "Metamorph", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/2b4283d9-415a-4ceb-9e45-c81e7fd3162e.png", description: "Twice per game, on your turn, you may change all resources of a given type that you just received from trade into any other resource type."},
+            {name: "Vault Keeper", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/3022a580-9625-4848-8621-5326f2ab2bd2.png", description: "At any time during your turn, you may vault up to 3 resources total face-down. Vaulted resources can't be used, stolen, or count toward hand limit. Place 3 time counters on each resource that you Vault; remove one per turn. When counters are removed, return the resource to your hand and gain an additional copy from the bank."},
+            {name: "Depth Caller", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/6433202d-728a-448c-a72f-7f8529063ff2.png", description: "Twice per game, after you roll, you may also collect resources from all hexes with numbers adjacent to your roll."},
+            {name: "Parasite", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/2ca26d55-b106-4e31-bb09-43ec2ed85502.png", description: "Whenever any opponent builds a city, take 1 card from their hand at random."},
+            {name: "Phase Echo", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/50163820-f86b-43f2-924b-5de1621044da.png", description: "Whenever the same number is rolled twice in a row, you gain 1 resource from any hex with that number. For 7 twice in a row choose any resource, after the robber is resolved."},
+            {name: "Entropy Agent", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/55bc20e3-3b0a-45b2-af09-a0d043425168.png", description: "Twice per game, on your turn, force one player to downgrade one of their cities back to a settlement. They keep the resources. Cannot target the same player twice."},
+            {name: "Probability Matrix", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/89a45d2a-6e41-4d05-a18e-7a2db25ac4e0.png", description: "Once per turn, after both longest road and largest army cards have been claimed, you may spend 2 resources to set one of the dice to a specific number (1-6). The other die is rolled normally. This can be on your roll or that of any opponent."},
+            {name: "Chaos Weaver", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/31ada591-e827-436c-ba33-4e16e50f50d6.png", description: "Twice per game, after any player rolls, you may force them to reroll both dice. The new result stands."}
+        ];
+
         let voteCounts = {};
-        
-        // Initialize user votes structure for each power - FIXED: proper section tracking
+
         function initializeUserVotes() {
             powers.forEach(power => {
-                if (!userVotes[power.name]) {
-                    userVotes[power.name] = {
-                        image_total: 0,    // Track total votes per section (up + down)
-                        rules_total: 0,    // Track total votes per section (up + down)
-                        image_up: 0,
-                        image_down: 0,
-                        rules_up: 0,
-                        rules_down: 0
-                    };
-                }
+                if (!userVotes[power.name]) { userVotes[power.name] = { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 }; }
+                if (!voteHistory[power.name]) { voteHistory[power.name] = { image: [], rules: [] }; }
             });
             localStorage.setItem('catan_user_votes', JSON.stringify(userVotes));
+            localStorage.setItem('catan_vote_history', JSON.stringify(voteHistory));
         }
-        
-        // Initialize the app
+
         async function initApp() {
-            try {
-                initializeUserVotes();
-                await loadVotes();
-                renderPowers();
-                showMessage('Voting system ready! Cast your votes below.', 'success');
-            } catch (error) {
-                console.error('Initialization error:', error);
-                showMessage('Error initializing voting system. Please refresh the page.', 'error');
-            }
+            try { initializeUserVotes(); await loadVotes(); renderPowers(); showMessage('Voting system ready! Cast your votes below.', 'success'); }
+            catch (error) { console.error('Initialization error:', error); showMessage('Error initializing voting system. Please refresh the page.', 'error'); }
         }
-        
-        // Load existing votes from Supabase
+
         async function loadVotes() {
-            const { data, error } = await supabase
-                .from('votes')
-                .select('power_name, vote_type, vote_value');
-            
-            if (error) {
-                console.error('Error loading votes:', error);
-                initializeEmptyVotes();
-                return;
-            }
-            
-            // Initialize vote counts with separate up/down counters
-            voteCounts = {};
-            powers.forEach(power => {
-                voteCounts[power.name] = { 
-                    image_up: 0, 
-                    image_down: 0, 
-                    rules_up: 0, 
-                    rules_down: 0 
-                };
-            });
-            
-            // Aggregate votes
-            if (data) {
-                data.forEach(vote => {
-                    if (voteCounts[vote.power_name]) {
-                        const key = vote.vote_type + (vote.vote_value > 0 ? '_up' : '_down');
-                        voteCounts[vote.power_name][key] += Math.abs(vote.vote_value);
-                    }
-                });
-            }
+            const { data, error } = await supabase.from('votes').select('power_name, vote_type, vote_value');
+            if (error) { console.error('Error loading votes:', error); initializeEmptyVotes(); return; }
+            voteCounts = {}; powers.forEach(power => { voteCounts[power.name] = { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 }; });
+            if (data) { data.forEach(vote => { if (voteCounts[vote.power_name]) { const key = vote.vote_type + (vote.vote_value > 0 ? '_up' : '_down'); voteCounts[vote.power_name][key] += Math.abs(vote.vote_value); } }); }
         }
-        
-        // Initialize empty vote counts
-        function initializeEmptyVotes() {
-            voteCounts = {};
-            powers.forEach(power => {
-                voteCounts[power.name] = { 
-                    image_up: 0, 
-                    image_down: 0, 
-                    rules_up: 0, 
-                    rules_down: 0 
-                };
-            });
-        }
-        
-        // Cast a vote - FIXED: proper section limits and real-time updates
+
+        function initializeEmptyVotes() { voteCounts = {}; powers.forEach(power => { voteCounts[power.name] = { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 }; }); }
+
         async function castVote(powerName, voteType, voteValue) {
             const userPower = userVotes[powerName];
             const sectionTotal = userPower[voteType + '_up'] + userPower[voteType + '_down'];
-            
-            // Check if user has reached the limit for this SECTION (3 votes total per section)
-            if (sectionTotal >= 3) {
-                const voteTypeText = voteType === 'image' ? 'Image' : 'Rule';
-                showMessage(`You've already cast 3 votes for ${powerName}'s ${voteTypeText} section!`, 'error');
-                return;
-            }
-            
-            // Get the button for animation
-            const button = event.target;
-            button.classList.add('voting');
-            
+            if (sectionTotal >= 3) { const voteTypeText = voteType === 'image' ? 'Image' : 'Rule'; showMessage(`You've already cast 3 votes for ${powerName}'s ${voteTypeText} section!`, 'error'); return; }
+            const button = event.target; button.classList.add('voting');
             try {
-                // Insert vote into Supabase
-                const { error } = await supabase
-                    .from('votes')
-                    .insert([
-                        {
-                            power_name: powerName,
-                            vote_type: voteType,
-                            vote_value: voteValue,
-                            session_id: sessionId,
-                            created_at: new Date().toISOString()
-                        }
-                    ]);
-                
-                if (error) {
-                    console.error('Vote submission error:', error);
-                    showMessage('Error submitting vote. Please try again.', 'error');
-                    button.classList.remove('voting');
-                    return;
-                }
-                
-                // Update local counts immediately for real-time display
-                const voteKey = voteType + (voteValue > 0 ? '_up' : '_down');
-                voteCounts[powerName][voteKey] += 1;
-                userVotes[powerName][voteKey] += 1;
-                localStorage.setItem('catan_user_votes', JSON.stringify(userVotes));
-                
-                // Immediately re-render the specific power card for real-time updates
-                setTimeout(() => {
-                    renderPowerCard(powerName);
-                    button.classList.remove('voting');
-                }, 300);
-                
+                const { data, error } = await supabase.from('votes').insert([{ power_name: powerName, vote_type: voteType, vote_value: voteValue, session_id: sessionId, created_at: new Date().toISOString() }]).select('id');
+                if (error) { console.error('Vote submission error:', error); showMessage('Error submitting vote. Please try again.', 'error'); button.classList.remove('voting'); return; }
+                const voteKey = voteType + (voteValue > 0 ? '_up' : '_down'); const voteDirection = voteValue > 0 ? 'up' : 'down';
+                voteCounts[powerName][voteKey] += 1; userVotes[powerName][voteKey] += 1;
+                voteHistory[powerName][voteType].push({ type: voteDirection, timestamp: Date.now(), id: data[0].id });
+                localStorage.setItem('catan_user_votes', JSON.stringify(userVotes)); localStorage.setItem('catan_vote_history', JSON.stringify(voteHistory));
+                setTimeout(() => { renderPowerCard(powerName); button.classList.remove('voting'); }, 300);
                 showMessage(`Vote submitted for ${powerName}!`, 'success');
-                
-            } catch (error) {
-                console.error('Unexpected error:', error);
-                showMessage('Unexpected error. Please try again.', 'error');
-                button.classList.remove('voting');
-            }
+            } catch (error) { console.error('Unexpected error:', error); showMessage('Unexpected error. Please try again.', 'error'); button.classList.remove('voting'); }
         }
-        
-        // Render all powers
-        function renderPowers() {
-            const container = document.getElementById('powersContainer');
-            container.innerHTML = '';
-            
-            powers.forEach(power => {
-                renderPowerCard(power.name, container);
-            });
+
+        async function undoLastVote(powerName, voteType) {
+            const history = voteHistory[powerName][voteType]; if (history.length === 0) { showMessage('No votes to undo for this section!', 'error'); return; }
+            const lastVote = history.pop();
+            try {
+                const { error } = await supabase.from('votes').delete().eq('id', lastVote.id);
+                if (error) { console.error('Undo error:', error); showMessage('Error undoing vote. Please try again.', 'error'); history.push(lastVote); return; }
+                const voteKey = voteType + '_' + lastVote.type; voteCounts[powerName][voteKey] -= 1; userVotes[powerName][voteKey] -= 1;
+                localStorage.setItem('catan_user_votes', JSON.stringify(userVotes)); localStorage.setItem('catan_vote_history', JSON.stringify(voteHistory));
+                renderPowerCard(powerName); showMessage(`Undid last ${voteType} vote for ${powerName}!`, 'success');
+            } catch (error) { console.error('Unexpected undo error:', error); showMessage('Unexpected error. Please try again.', 'error'); history.push(lastVote); }
         }
-        
-        // Render individual power card with proper section limits and real-time updates
+
+        function renderPowers() { const container = document.getElementById('powersContainer'); container.innerHTML = ''; powers.forEach(power => { renderPowerCard(power.name, container); }); }
+
         function renderPowerCard(powerName, container = null) {
-            const power = powers.find(p => p.name === powerName);
-            if (!power) return;
-            
-            if (!container) {
-                container = document.getElementById('powersContainer');
-            }
-            
+            const power = powers.find(p => p.name === powerName); if (!power) return; if (!container) { container = document.getElementById('powersContainer'); }
             const counts = voteCounts[power.name] || { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 };
             const userCount = userVotes[power.name] || { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 };
-            
-            // Calculate section totals for proper limits
-            const imageSectionTotal = userCount.image_up + userCount.image_down;
-            const rulesSectionTotal = userCount.rules_up + userCount.rules_down;
-            
-            const powerCard = document.createElement('div');
-            powerCard.className = 'power-card';
-            powerCard.innerHTML = `
+            const history = voteHistory[power.name] || { image: [], rules: [] };
+            const imageSectionTotal = userCount.image_up + userCount.image_down; const rulesSectionTotal = userCount.rules_up + userCount.rules_down;
+            const powerCard = document.createElement('div'); powerCard.className = 'power-card'; powerCard.innerHTML = `
                 <div class="power-name">${power.name}</div>
-                <img class="power-image" src="${power.image}" alt="${power.name}" 
-                     onclick="openImageModal('${power.image}', '${power.name}')"
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
+                <img class="power-image" src="${power.image}" alt="${power.name}" onclick="openImageModal('${power.image}', '${power.name}')" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
                 <div class="power-description">${power.description}</div>
                 <div class="voting-section">
                     <div class="vote-category">
                         <h4>Image Quality</h4>
                         <div class="vote-buttons">
-                            <button class="vote-btn" onclick="castVote('${power.name}', 'image', 1)" 
-                                    ${imageSectionTotal >= 3 ? 'disabled' : ''}>👍 +1</button>
-                            <button class="vote-btn" onclick="castVote('${power.name}', 'image', -1)" 
-                                    ${imageSectionTotal >= 3 ? 'disabled' : ''}>👎 -1</button>
+                            <button class="vote-btn" onclick="castVote('${power.name}', 'image', 1)" ${imageSectionTotal >= 3 ? 'disabled' : ''}>👍 +1</button>
+                            <button class="vote-btn" onclick="castVote('${power.name}', 'image', -1)" ${imageSectionTotal >= 3 ? 'disabled' : ''}>👎 -1</button>
                         </div>
-                        <div class="vote-counts">
-                            <span class="upvote-count">👍 ${counts.image_up}</span>
-                            <span class="downvote-count">👎 ${counts.image_down}</span>
-                        </div>
+                        <div class="vote-counts"><span class="upvote-count">👍 ${counts.image_up}</span><span class="downvote-count">👎 ${counts.image_down}</span></div>
                         <div class="vote-limit">Your votes: ${imageSectionTotal}/3 used</div>
+                        <button class="undo-btn" onclick="undoLastVote('${power.name}', 'image')" ${history.image.length === 0 ? 'disabled' : ''}>↩️ Undo Last</button>
                     </div>
                     <div class="vote-category">
                         <h4>Rule Design</h4>
                         <div class="vote-buttons">
-                            <button class="vote-btn" onclick="castVote('${power.name}', 'rules', 1)" 
-                                    ${rulesSectionTotal >= 3 ? 'disabled' : ''}>👍 +1</button>
-                            <button class="vote-btn" onclick="castVote('${power.name}', 'rules', -1)" 
-                                    ${rulesSectionTotal >= 3 ? 'disabled' : ''}>👎 -1</button>
+                            <button class="vote-btn" onclick="castVote('${power.name}', 'rules', 1)" ${rulesSectionTotal >= 3 ? 'disabled' : ''}>👍 +1</button>
+                            <button class="vote-btn" onclick="castVote('${power.name}', 'rules', -1)" ${rulesSectionTotal >= 3 ? 'disabled' : ''}>👎 -1</button>
                         </div>
-                        <div class="vote-counts">
-                            <span class="upvote-count">👍 ${counts.rules_up}</span>
-                            <span class="downvote-count">👎 ${counts.rules_down}</span>
-                        </div>
+                        <div class="vote-counts"><span class="upvote-count">👍 ${counts.rules_up}</span><span class="downvote-count">👎 ${counts.rules_down}</span></div>
                         <div class="vote-limit">Your votes: ${rulesSectionTotal}/3 used</div>
+                        <button class="undo-btn" onclick="undoLastVote('${power.name}', 'rules')" ${history.rules.length === 0 ? 'disabled' : ''}>↩️ Undo Last</button>
                     </div>
-                </div>
-            `;
-            
-            // Replace existing card or append new one
-            const existingCard = container.querySelector(`[data-power="${power.name}"]`);
-            if (existingCard) {
-                existingCard.replaceWith(powerCard);
-            } else {
-                powerCard.setAttribute('data-power', power.name);
-                container.appendChild(powerCard);
-            }
+                </div>`;
+            const existingCard = container.querySelector(`[data-power="${power.name}"]`); if (existingCard) { existingCard.replaceWith(powerCard); } else { powerCard.setAttribute('data-power', power.name); container.appendChild(powerCard); }
         }
-        
-        // Image modal functionality
-        function openImageModal(imageSrc, altText) {
-            const modal = document.getElementById('imageModal');
-            const modalImg = document.getElementById('modalImage');
-            modal.style.display = 'block';
-            modalImg.src = imageSrc;
-            modalImg.alt = altText;
-        }
-        
-        // Close modal when clicking outside
-        document.getElementById('imageModal').addEventListener('click', function() {
-            this.style.display = 'none';
-        });
-        
-        // Show status message
-        function showMessage(message, type) {
-            const statusEl = document.getElementById('statusMessage');
-            statusEl.textContent = message;
-            statusEl.className = `status-message status-${type}`;
-            
-            if (type === 'success') {
-                setTimeout(() => {
-                    statusEl.style.opacity = '0.7';
-                }, 2000);
-            }
-        }
-        
-        // Initialize when page loads
+
+        function openImageModal(imageSrc, altText) { const modal = document.getElementById('imageModal'); const modalImg = document.getElementById('modalImage'); modal.style.display = 'block'; modalImg.src = imageSrc; modalImg.alt = altText; }
+        document.getElementById('imageModal').addEventListener('click', function() { this.style.display = 'none'; });
+        function showMessage(message, type) { const statusEl = document.getElementById('statusMessage'); statusEl.textContent = message; statusEl.className = `status-message status-${type}`; if (type === 'success') { setTimeout(() => { statusEl.style.opacity = '0.7'; }, 2000); } }
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
