@@ -24,27 +24,21 @@
         .power-image { width: 100%; height: 280px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; border: 2px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: all 0.3s ease; }
         .power-image:hover { border-color: rgba(64, 224, 255, 0.5); transform: scale(1.02); }
         .power-description { margin-bottom: 25px; color: #d0d0d0; font-size: 1em; line-height: 1.6; }
-        .voting-section { display: flex; justify-content: space-between; align-items: flex-start; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); gap: 20px; }
-        .vote-category { text-align: center; flex: 1; }
-        .vote-category h4 { color: #b0b0b0; font-size: 1.1em; margin-bottom: 15px; font-weight: 600; }
-        .vote-buttons { display: flex; gap: 12px; justify-content: center; margin-bottom: 15px; }
-        .vote-btn { background: linear-gradient(45deg, #4a5568, #2d3748); color: white; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 18px; border-radius: 25px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s ease; min-width: 60px; position: relative; }
-        .vote-btn:hover:not(:disabled) { background: linear-gradient(45deg, #40e0ff, #ff40a0); border-color: #40e0ff; transform: scale(1.05); box-shadow: 0 0 20px rgba(64, 224, 255, 0.6); }
-        .vote-btn:disabled { background: #2a2a2a; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
-        .vote-btn.voting { animation: flash 0.3s ease-in-out; }
-        @keyframes flash { 0% { background: linear-gradient(45deg, #4a5568, #2d3748); } 50% { background: linear-gradient(45deg, #40e0ff, #ff40a0); transform: scale(1.1); } 100% { background: linear-gradient(45deg, #4a5568, #2d3748); } }
-        .vote-counts { display: flex; justify-content: space-between; font-size: 1.1em; margin-bottom: 10px; }
-        .upvote-count, .downvote-count { font-weight: bold; font-size: 1.2em; padding: 5px 10px; border-radius: 15px; transition: all 0.3s ease; }
-        .upvote-count { color: #68d391; background: rgba(104, 211, 145, 0.1); }
-        .downvote-count { color: #fc8181; background: rgba(252, 129, 129, 0.1); }
-        .vote-limit { font-size: 0.9em; color: #718096; font-weight: 500; margin-bottom: 8px; }
-        .undo-btn { background: linear-gradient(45deg, #805ad5, #553c9a); color: white; border: none; padding: 6px 12px; border-radius: 15px; cursor: pointer; font-size: 0.8em; transition: all 0.3s ease; margin-top: 5px; }
-        .undo-btn:hover:not(:disabled) { background: linear-gradient(45deg, #9f7aea, #805ad5); transform: scale(1.05); }
-        .undo-btn:disabled { background: #2a2a2a; color: #666; cursor: not-allowed; }
+        .voting-section { padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .vote-category { margin-bottom: 25px; }
+        .vote-category h4 { color: #b0b0b0; font-size: 1.1em; margin-bottom: 12px; font-weight: 600; text-align: center; }
+        .rating-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 8px; }
+        .star-rating { display: flex; gap: 5px; }
+        .star { font-size: 28px; cursor: pointer; color: #4a5568; transition: all 0.2s ease; user-select: none; }
+        .star:hover, .star.hover { color: #ffd700; transform: scale(1.1); }
+        .star.active { color: #ffd700; }
+        .star.disabled { cursor: not-allowed; opacity: 0.5; }
+        .average-display { background: rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 20px; font-size: 0.9em; color: #e0e0e0; min-width: 120px; text-align: center; }
+        .user-vote { font-size: 0.85em; color: #9ca3af; text-align: center; margin-top: 5px; }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); cursor: pointer; }
         .modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; max-height: 90%; }
         .modal-image { width: 100%; height: auto; border-radius: 10px; }
-        @media (max-width: 900px) { .powers-grid { grid-template-columns: 1fr; } h1 { font-size: 2.2em; } .voting-section { flex-direction: column; gap: 20px; } }
+        @media (max-width: 900px) { .powers-grid { grid-template-columns: 1fr; } h1 { font-size: 2.2em; } .rating-container { flex-direction: column; gap: 10px; } .star { font-size: 24px; } }
     </style>
 </head>
 <body>
@@ -53,12 +47,12 @@
         <div class="subtitle">Community Voting Platform</div>
         <div class="voting-info">
             <p>🛸 <strong>40 Unique Alien Hero Powers</strong> for your Catan adventures!</p>
-            <p>🗳️ Vote for your favorite hero power images and rule descriptions! Each category is voted separately.</p>
-            <p>🎯 Up to <strong>3 votes per section</strong> per power - choose wisely between upvotes and downvotes!</p>
-            <p>🔄 <strong>NEW:</strong> Undo your last vote in each section if you change your mind!</p>
+            <p>⭐ <strong>Rate each power from 1 to 5 stars</strong> for both image quality and rule design!</p>
+            <p>🎯 <strong>One rating per category</strong> per power - choose your stars carefully!</p>
+            <p>📊 See the community average rating next to each star scale!</p>
             <p>🔒 Session-based tracking ensures fair voting across all participants.</p>
         </div>
-        <div id="statusMessage" class="status-message status-loading">Initializing voting system...</div>
+        <div id="statusMessage" class="status-message status-loading">Initializing rating system...</div>
         <div id="powersContainer" class="powers-grid"></div>
     </div>
 
@@ -72,8 +66,7 @@
         let sessionId = localStorage.getItem('catan_voting_session');
         if (!sessionId) { sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('catan_voting_session', sessionId); }
 
-        let userVotes = JSON.parse(localStorage.getItem('catan_user_votes') || '{}');
-        let voteHistory = JSON.parse(localStorage.getItem('catan_vote_history') || '{}');
+        let userVotes = JSON.parse(localStorage.getItem('catan_user_votes_stars') || '{}');
 
         const powers = [
             {name: "Quantum Harvester", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/09386ab1-4d87-446e-b683-915d04b69a19.png", description: "Once per turn, you may reroll both dice if the result is 5 or less."},
@@ -118,100 +111,75 @@
             {name: "Chaos Weaver", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/31ada591-e827-436c-ba33-4e16e50f50d6.png", description: "Twice per game, after any player rolls, you may force them to reroll both dice. The new result stands."}
         ];
 
-        let voteCounts = {};
+        let voteAverages = {};
 
         function initializeUserVotes() {
-            powers.forEach(power => {
-                if (!userVotes[power.name]) { userVotes[power.name] = { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 }; }
-                if (!voteHistory[power.name]) { voteHistory[power.name] = { image: [], rules: [] }; }
-            });
-            localStorage.setItem('catan_user_votes', JSON.stringify(userVotes));
-            localStorage.setItem('catan_vote_history', JSON.stringify(voteHistory));
+            powers.forEach(power => { if (!userVotes[power.name]) { userVotes[power.name] = { image: null, rules: null }; } });
+            localStorage.setItem('catan_user_votes_stars', JSON.stringify(userVotes));
         }
 
-        async function initApp() {
-            try { initializeUserVotes(); await loadVotes(); renderPowers(); showMessage('Voting system ready! Cast your votes below.', 'success'); }
-            catch (error) { console.error('Initialization error:', error); showMessage('Error initializing voting system. Please refresh the page.', 'error'); }
-        }
+        async function initApp() { try { initializeUserVotes(); await loadVotes(); renderPowers(); showMessage('Rating system ready! Rate your favorite powers below.', 'success'); } catch (error) { console.error('Initialization error:', error); showMessage('Error initializing rating system. Please refresh the page.', 'error'); } }
 
         async function loadVotes() {
             const { data, error } = await supabase.from('votes').select('power_name, vote_type, vote_value');
             if (error) { console.error('Error loading votes:', error); initializeEmptyVotes(); return; }
-            voteCounts = {}; powers.forEach(power => { voteCounts[power.name] = { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 }; });
-            if (data) { data.forEach(vote => { if (voteCounts[vote.power_name]) { const key = vote.vote_type + (vote.vote_value > 0 ? '_up' : '_down'); voteCounts[vote.power_name][key] += Math.abs(vote.vote_value); } }); }
+            voteAverages = {}; powers.forEach(power => { voteAverages[power.name] = { image: { avg: 0, count: 0 }, rules: { avg: 0, count: 0 } }; });
+            if (data) {
+                const grouped = {}; data.forEach(vote => { if (!grouped[vote.power_name]) grouped[vote.power_name] = { image: [], rules: [] }; if (vote.vote_value >= 1 && vote.vote_value <= 5) { grouped[vote.power_name][vote.vote_type].push(vote.vote_value); } });
+                Object.entries(grouped).forEach(([powerName, votes]) => { ['image','rules'].forEach(type => { if (votes[type].length > 0) { const sum = votes[type].reduce((a,b)=>a+b,0); voteAverages[powerName][type] = { avg: (sum / votes[type].length), count: votes[type].length }; } }); });
+            }
         }
 
-        function initializeEmptyVotes() { voteCounts = {}; powers.forEach(power => { voteCounts[power.name] = { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 }; }); }
+        function initializeEmptyVotes() { voteAverages = {}; powers.forEach(power => { voteAverages[power.name] = { image: { avg: 0, count: 0 }, rules: { avg: 0, count: 0 } }; }); }
 
-        async function castVote(powerName, voteType, voteValue) {
-            const userPower = userVotes[powerName];
-            const sectionTotal = userPower[voteType + '_up'] + userPower[voteType + '_down'];
-            if (sectionTotal >= 3) { const voteTypeText = voteType === 'image' ? 'Image' : 'Rule'; showMessage(`You've already cast 3 votes for ${powerName}'s ${voteTypeText} section!`, 'error'); return; }
-            const button = event.target; button.classList.add('voting');
+        async function castVote(powerName, voteType, rating) {
+            if (userVotes[powerName][voteType] !== null) { showMessage(`You've already rated ${powerName}'s ${voteType}!`, 'error'); return; }
             try {
-                const { data, error } = await supabase.from('votes').insert([{ power_name: powerName, vote_type: voteType, vote_value: voteValue, session_id: sessionId, created_at: new Date().toISOString() }]).select('id');
-                if (error) { console.error('Vote submission error:', error); showMessage('Error submitting vote. Please try again.', 'error'); button.classList.remove('voting'); return; }
-                const voteKey = voteType + (voteValue > 0 ? '_up' : '_down'); const voteDirection = voteValue > 0 ? 'up' : 'down';
-                voteCounts[powerName][voteKey] += 1; userVotes[powerName][voteKey] += 1;
-                voteHistory[powerName][voteType].push({ type: voteDirection, timestamp: Date.now(), id: data[0].id });
-                localStorage.setItem('catan_user_votes', JSON.stringify(userVotes)); localStorage.setItem('catan_vote_history', JSON.stringify(voteHistory));
-                setTimeout(() => { renderPowerCard(powerName); button.classList.remove('voting'); }, 300);
-                showMessage(`Vote submitted for ${powerName}!`, 'success');
-            } catch (error) { console.error('Unexpected error:', error); showMessage('Unexpected error. Please try again.', 'error'); button.classList.remove('voting'); }
+                const { error } = await supabase.from('votes').insert([{ power_name: powerName, vote_type: voteType, vote_value: rating, session_id: sessionId, created_at: new Date().toISOString() }]);
+                if (error) { console.error('Vote submission error:', error); showMessage('Error submitting rating. Please try again.', 'error'); return; }
+                userVotes[powerName][voteType] = rating; localStorage.setItem('catan_user_votes_stars', JSON.stringify(userVotes));
+                const current = voteAverages[powerName][voteType]; const newCount = current.count + 1; const newSum = (current.avg * current.count) + rating; voteAverages[powerName][voteType] = { avg: newSum / newCount, count: newCount };
+                renderPowerCard(powerName); showMessage(`${rating}-star rating submitted for ${powerName}!`, 'success');
+            } catch (error) { console.error('Unexpected error:', error); showMessage('Unexpected error. Please try again.', 'error'); }
         }
 
-        async function undoLastVote(powerName, voteType) {
-            const history = voteHistory[powerName][voteType]; if (history.length === 0) { showMessage('No votes to undo for this section!', 'error'); return; }
-            const lastVote = history.pop();
-            try {
-                const { error } = await supabase.from('votes').delete().eq('id', lastVote.id);
-                if (error) { console.error('Undo error:', error); showMessage('Error undoing vote. Please try again.', 'error'); history.push(lastVote); return; }
-                const voteKey = voteType + '_' + lastVote.type; voteCounts[powerName][voteKey] -= 1; userVotes[powerName][voteKey] -= 1;
-                localStorage.setItem('catan_user_votes', JSON.stringify(userVotes)); localStorage.setItem('catan_vote_history', JSON.stringify(voteHistory));
-                renderPowerCard(powerName); showMessage(`Undid last ${voteType} vote for ${powerName}!`, 'success');
-            } catch (error) { console.error('Unexpected undo error:', error); showMessage('Unexpected error. Please try again.', 'error'); history.push(lastVote); }
-        }
+        function renderPowers() { const container = document.getElementById('powersContainer'); container.innerHTML=''; powers.forEach(power => { renderPowerCard(power.name, container); }); }
 
-        function renderPowers() { const container = document.getElementById('powersContainer'); container.innerHTML = ''; powers.forEach(power => { renderPowerCard(power.name, container); }); }
-
-        function renderPowerCard(powerName, container = null) {
-            const power = powers.find(p => p.name === powerName); if (!power) return; if (!container) { container = document.getElementById('powersContainer'); }
-            const counts = voteCounts[power.name] || { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 };
-            const userCount = userVotes[power.name] || { image_up: 0, image_down: 0, rules_up: 0, rules_down: 0 };
-            const history = voteHistory[power.name] || { image: [], rules: [] };
-            const imageSectionTotal = userCount.image_up + userCount.image_down; const rulesSectionTotal = userCount.rules_up + userCount.rules_down;
-            const powerCard = document.createElement('div'); powerCard.className = 'power-card'; powerCard.innerHTML = `
+        function renderPowerCard(powerName, container=null) {
+            const power = powers.find(p=>p.name===powerName); if (!power) return; if (!container) container = document.getElementById('powersContainer');
+            const averages = voteAverages[power.name] || { image: { avg: 0, count: 0 }, rules: { avg: 0, count: 0 } }; const userRating = userVotes[power.name] || { image: null, rules: null };
+            const powerCard = document.createElement('div'); powerCard.className='power-card'; powerCard.innerHTML=`
                 <div class="power-name">${power.name}</div>
                 <img class="power-image" src="${power.image}" alt="${power.name}" onclick="openImageModal('${power.image}', '${power.name}')" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
                 <div class="power-description">${power.description}</div>
                 <div class="voting-section">
                     <div class="vote-category">
                         <h4>Image Quality</h4>
-                        <div class="vote-buttons">
-                            <button class="vote-btn" onclick="castVote('${power.name}', 'image', 1)" ${imageSectionTotal >= 3 ? 'disabled' : ''}>👍 +1</button>
-                            <button class="vote-btn" onclick="castVote('${power.name}', 'image', -1)" ${imageSectionTotal >= 3 ? 'disabled' : ''}>👎 -1</button>
+                        <div class="rating-container">
+                            <div class="star-rating" data-power="${power.name}" data-type="image">${generateStars(5, userRating.image)}</div>
+                            <div class="average-display">${averages.image.count>0 ? `★ ${averages.image.avg.toFixed(1)} (${averages.image.count})` : 'No ratings yet'}</div>
                         </div>
-                        <div class="vote-counts"><span class="upvote-count">👍 ${counts.image_up}</span><span class="downvote-count">👎 ${counts.image_down}</span></div>
-                        <div class="vote-limit">Your votes: ${imageSectionTotal}/3 used</div>
-                        <button class="undo-btn" onclick="undoLastVote('${power.name}', 'image')" ${history.image.length === 0 ? 'disabled' : ''}>↩️ Undo Last</button>
+                        ${userRating.image ? `<div class="user-vote">Your rating: ${userRating.image} stars</div>` : ''}
                     </div>
                     <div class="vote-category">
                         <h4>Rule Design</h4>
-                        <div class="vote-buttons">
-                            <button class="vote-btn" onclick="castVote('${power.name}', 'rules', 1)" ${rulesSectionTotal >= 3 ? 'disabled' : ''}>👍 +1</button>
-                            <button class="vote-btn" onclick="castVote('${power.name}', 'rules', -1)" ${rulesSectionTotal >= 3 ? 'disabled' : ''}>👎 -1</button>
+                        <div class="rating-container">
+                            <div class="star-rating" data-power="${power.name}" data-type="rules">${generateStars(5, userRating.rules)}</div>
+                            <div class="average-display">${averages.rules.count>0 ? `★ ${averages.rules.avg.toFixed(1)} (${averages.rules.count})` : 'No ratings yet'}</div>
                         </div>
-                        <div class="vote-counts"><span class="upvote-count">👍 ${counts.rules_up}</span><span class="downvote-count">👎 ${counts.rules_down}</span></div>
-                        <div class="vote-limit">Your votes: ${rulesSectionTotal}/3 used</div>
-                        <button class="undo-btn" onclick="undoLastVote('${power.name}', 'rules')" ${history.rules.length === 0 ? 'disabled' : ''}>↩️ Undo Last</button>
+                        ${userRating.rules ? `<div class="user-vote">Your rating: ${userRating.rules} stars</div>` : ''}
                     </div>
                 </div>`;
             const existingCard = container.querySelector(`[data-power="${power.name}"]`); if (existingCard) { existingCard.replaceWith(powerCard); } else { powerCard.setAttribute('data-power', power.name); container.appendChild(powerCard); }
+            powerCard.querySelectorAll('.star-rating').forEach(rating => { const pName = rating.dataset.power; const vType = rating.dataset.type; const userHasVoted = userVotes[pName][vType] !== null; rating.querySelectorAll('.star').forEach((star, index) => { if (!userHasVoted) { star.addEventListener('mouseenter', () => highlightStars(rating, index + 1)); star.addEventListener('mouseleave', () => clearHighlight(rating)); star.addEventListener('click', () => castVote(pName, vType, index + 1)); } }); });
         }
 
-        function openImageModal(imageSrc, altText) { const modal = document.getElementById('imageModal'); const modalImg = document.getElementById('modalImage'); modal.style.display = 'block'; modalImg.src = imageSrc; modalImg.alt = altText; }
-        document.getElementById('imageModal').addEventListener('click', function() { this.style.display = 'none'; });
-        function showMessage(message, type) { const statusEl = document.getElementById('statusMessage'); statusEl.textContent = message; statusEl.className = `status-message status-${type}`; if (type === 'success') { setTimeout(() => { statusEl.style.opacity = '0.7'; }, 2000); } }
+        function generateStars(count, userRating) { let stars=''; for (let i=1;i<=count;i++){ const isActive = userRating && i<=userRating; const isDisabled = userRating!==null; stars += `<span class="star ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}" data-rating="${i}">★</span>`;} return stars; }
+        function highlightStars(container, rating) { container.querySelectorAll('.star').forEach((star, idx)=>{ star.classList.toggle('hover', idx < rating); }); }
+        function clearHighlight(container) { container.querySelectorAll('.star').forEach(star=>{ star.classList.remove('hover'); }); }
+        function openImageModal(imageSrc, altText) { const modal=document.getElementById('imageModal'); const modalImg=document.getElementById('modalImage'); modal.style.display='block'; modalImg.src=imageSrc; modalImg.alt=altText; }
+        document.getElementById('imageModal').addEventListener('click', function(){ this.style.display='none'; });
+        function showMessage(message, type){ const statusEl=document.getElementById('statusMessage'); statusEl.textContent=message; statusEl.className=`status-message status-${type}`; if(type==='success'){ setTimeout(()=>{ statusEl.style.opacity='0.7'; },2000);} }
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
