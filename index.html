@@ -30,18 +30,17 @@
         .rating-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 10px; }
         .star-rating { display: flex; gap: 5px; }
         .star { font-size: 28px; cursor: pointer; color: #4a5568; transition: all 0.2s ease; user-select: none; }
-        .star:hover, .star.hover { color: #ffd700; transform: scale(1.1); }
-        .star.active { color: #ffd700; }
+        .star:hover:not(.disabled), .star.hover { color: #ffd700; transform: scale(1.1); text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+        .star.active { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
         .star.disabled { cursor: not-allowed; opacity: 0.7; }
-        .average-display { background: rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 20px; font-size: 0.9em; color: #e0e0e0; min-width: 120px; text-align: center; }
-        .user-vote-info { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; }
+        .average-display { background: rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 20px; font-size: 0.9em; color: #e0e0e0; min-width: 120px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .user-vote-info { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; }
         .user-vote { font-size: 0.85em; color: #9ca3af; }
-        .undo-btn { background: linear-gradient(45deg, #805ad5, #553c9a); color: white; border: none; padding: 4px 8px; border-radius: 12px; cursor: pointer; font-size: 0.75em; transition: all 0.3s ease; }
-        .undo-btn:hover:not(:disabled) { background: linear-gradient(45deg, #9f7aea, #805ad5); transform: scale(1.05); }
-        .undo-btn:disabled { background: #2a2a2a; color: #666; cursor: not-allowed; }
+        .undo-btn { background: linear-gradient(45deg, #805ad5, #553c9a); color: white; border: none; padding: 5px 10px; border-radius: 12px; cursor: pointer; font-size: 0.75em; transition: all 0.3s ease; font-weight: 500; }
+        .undo-btn:hover { background: linear-gradient(45deg, #9f7aea, #805ad5); transform: scale(1.05); box-shadow: 0 2px 8px rgba(128, 90, 213, 0.4); }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); cursor: pointer; }
         .modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; max-height: 90%; }
-        .modal-image { width: 100%; height: auto; border-radius: 10px; }
+        .modal-image { width: 100%; height: auto; border-radius: 10px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
         @media (max-width: 900px) { .powers-grid { grid-template-columns: 1fr; } h1 { font-size: 2.2em; } .rating-container { flex-direction: column; gap: 10px; } .star { font-size: 24px; } }
     </style>
 </head>
@@ -61,7 +60,11 @@
         <div id="powersContainer" class="powers-grid"></div>
     </div>
 
-    <div id="imageModal" class="modal"><div class="modal-content"><img id="modalImage" class="modal-image" src="" alt=""></div></div>
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <img id="modalImage" class="modal-image" src="" alt="">
+        </div>
+    </div>
 
     <script>
         const SUPABASE_URL = 'https://udiaqtjjsspfznxeszyy.supabase.co';
@@ -69,9 +72,13 @@
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let sessionId = localStorage.getItem('catan_voting_session');
-        if (!sessionId) { sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('catan_voting_session', sessionId); }
+        if (!sessionId) { 
+            sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); 
+            localStorage.setItem('catan_voting_session', sessionId); 
+        }
 
         let userVotes = JSON.parse(localStorage.getItem('catan_user_votes_stars') || '{}');
+        let voteAverages = {};
 
         const powers = [
             {name: "Quantum Harvester", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/09386ab1-4d87-446e-b683-915d04b69a19.png", description: "Once per turn, you may reroll both dice if the result is 5 or less."},
@@ -116,11 +123,11 @@
             {name: "Chaos Weaver", image: "https://user-gen-media-assets.s3.amazonaws.com/seedream_images/31ada591-e827-436c-ba33-4e16e50f50d6.png", description: "Twice per game, after any player rolls, you may force them to reroll both dice. The new result stands."}
         ];
 
-        let voteAverages = {};
-
         function initializeUserVotes() {
             powers.forEach(power => {
-                if (!userVotes[power.name]) { userVotes[power.name] = { image: null, rules: null }; }
+                if (!userVotes[power.name]) {
+                    userVotes[power.name] = { image: null, rules: null };
+                }
             });
             localStorage.setItem('catan_user_votes_stars', JSON.stringify(userVotes));
         }
@@ -137,7 +144,7 @@
                 voteAverages = {}; powers.forEach(power => { voteAverages[power.name] = { image: { avg: 0, count: 0 }, rules: { avg: 0, count: 0 } }; });
                 if (data) {
                     const grouped = {}; data.forEach(vote => { if (!grouped[vote.power_name]) grouped[vote.power_name] = { image: [], rules: [] }; if (vote.vote_value >= 1 && vote.vote_value <= 5) { grouped[vote.power_name][vote.vote_type].push(vote.vote_value); } });
-                    Object.entries(grouped).forEach(([powerName, votes]) => { ['image','rules'].forEach(type => { if (votes[type].length > 0) { const sum = votes[type].reduce((a,b)=>a+b,0); voteAverages[powerName][type] = { avg: (sum / votes[type].length), count: votes[type].length }; } }); });
+                    Object.entries(grouped).forEach(([powerName, votes]) => { ['image','rules'].forEach(type => { if (votes[type] && votes[type].length > 0) { const sum = votes[type].reduce((a,b)=>a+b,0); voteAverages[powerName][type] = { avg: sum / votes[type].length, count: votes[type].length }; } }); });
                 }
             } catch (error) { console.error('Error in loadVotes:', error); initializeEmptyVotes(); }
         }
@@ -150,61 +157,68 @@
                 const { data, error } = await supabase.from('votes').insert([{ power_name: powerName, vote_type: voteType, vote_value: parseInt(rating), session_id: sessionId }]).select('*');
                 if (error) { console.error('Supabase error:', error); showMessage(`Database error: ${error.message}`, 'error'); return; }
                 if (!userVotes[powerName]) { userVotes[powerName] = { image: null, rules: null }; }
-                userVotes[powerName][voteType] = rating; localStorage.setItem('catan_user_votes_stars', JSON.stringify(userVotes));
-                const current = voteAverages[powerName][voteType]; const newCount = current.count + 1; const newSum = (current.avg * current.count) + rating; voteAverages[powerName][voteType] = { avg: newSum / newCount, count: newCount };
-                renderPowerCard(powerName); showMessage(`${rating}-star rating submitted for ${powerName}'s ${voteType}!`, 'success');
+                userVotes[powerName][voteType] = parseInt(rating); localStorage.setItem('catan_user_votes_stars', JSON.stringify(userVotes));
+                const current = voteAverages[powerName][voteType]; const newCount = current.count + 1; const newSum = (current.avg * current.count) + parseInt(rating); voteAverages[powerName][voteType] = { avg: newSum / newCount, count: newCount };
+                renderPowerCard(powerName); showMessage(`${rating}-star rating submitted for ${powerName}!`, 'success');
             } catch (error) { console.error('Unexpected error:', error); showMessage(`Unexpected error: ${error.message}`, 'error'); }
         }
 
         async function undoVote(powerName, voteType) {
             if (!userVotes[powerName] || userVotes[powerName][voteType] === null) { showMessage('No vote to undo for this category!', 'error'); return; }
+            const currentRating = userVotes[powerName][voteType];
             try {
                 const { error } = await supabase.from('votes').delete().eq('power_name', powerName).eq('vote_type', voteType).eq('session_id', sessionId);
                 if (error) { console.error('Undo error:', error); showMessage('Error undoing vote. Please try again.', 'error'); return; }
-                const oldRating = userVotes[powerName][voteType]; userVotes[powerName][voteType] = null; localStorage.setItem('catan_user_votes_stars', JSON.stringify(userVotes));
-                const current = voteAverages[powerName][voteType]; if (current.count > 1) { const newCount = current.count - 1; const newSum = (current.avg * current.count) - oldRating; voteAverages[powerName][voteType] = { avg: newSum / newCount, count: newCount }; } else { voteAverages[powerName][voteType] = { avg: 0, count: 0 }; }
-                renderPowerCard(powerName); showMessage(`Undid ${voteType} rating for ${powerName}! You can vote again.`, 'success');
+                userVotes[powerName][voteType] = null; localStorage.setItem('catan_user_votes_stars', JSON.stringify(userVotes));
+                const current = voteAverages[powerName][voteType]; if (current.count > 1) { const newCount = current.count - 1; const newSum = (current.avg * current.count) - currentRating; voteAverages[powerName][voteType] = { avg: newSum / newCount, count: newCount }; } else { voteAverages[powerName][voteType] = { avg: 0, count: 0 }; }
+                renderPowerCard(powerName); showMessage(`Undid ${voteType} rating for ${powerName}! You can rate again.`, 'success');
             } catch (error) { console.error('Unexpected undo error:', error); showMessage('Unexpected error undoing vote.', 'error'); }
         }
 
         function renderPowers() { const container = document.getElementById('powersContainer'); container.innerHTML=''; powers.forEach(power => { renderPowerCard(power.name, container); }); }
 
         function renderPowerCard(powerName, container=null) {
-            const power = powers.find(p=>p.name===powerName); if (!power) return; if (!container) container = document.getElementById('powersContainer');
+            const power = powers.find(p=>p.name===powerName); if (!power) { console.error(`Power not found: ${powerName}`); return; } if (!container) container = document.getElementById('powersContainer');
             const averages = voteAverages[power.name] || { image: { avg: 0, count: 0 }, rules: { avg: 0, count: 0 } }; const userRating = userVotes[power.name] || { image: null, rules: null };
-            const powerCard = document.createElement('div'); powerCard.className='power-card'; powerCard.innerHTML=`
+            const existingCard = container.querySelector(`[data-power="${powerName}"]`); if (existingCard) existingCard.remove();
+            const escapedName = power.name.replace(/'/g, "\\'");
+            const powerCard = document.createElement('div'); powerCard.className='power-card'; powerCard.setAttribute('data-power', powerName); powerCard.innerHTML=`
                 <div class="power-name">${power.name}</div>
-                <img class="power-image" src="${power.image}" alt="${power.name}" onclick="openImageModal('${power.image}', '${power.name}')" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
+                <img class="power-image" src="${power.image}" alt="${power.name}" onclick="openImageModal('${power.image.replace(/'/g, "\\'")}', '${escapedName}')" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
                 <div class="power-description">${power.description}</div>
                 <div class="voting-section">
                     <div class="vote-category">
                         <h4>Image Quality</h4>
                         <div class="rating-container">
                             <div class="star-rating" data-power="${power.name}" data-type="image">${generateStars(5, userRating.image)}</div>
-                            <div class="average-display">${averages.image.count>0 ? `★ ${averages.image.avg.toFixed(1)} (${averages.image.count})` : 'No ratings yet'}</div>
+                            <div class="average-display">${averages.image.count>0 ? `★ ${averages.image.avg.toFixed(1)} (${averages.image.count} votes)` : 'No ratings yet'}</div>
                         </div>
-                        <div class="user-vote-info">${userRating.image ? `<span class=\"user-vote\">Your rating: ${userRating.image} stars</span>` : '<span class="user-vote">Click stars to rate</span>'} ${userRating.image ? `<button class=\"undo-btn\" onclick=\"undoVote('${power.name}', 'image')\">↩️ Undo</button>` : ''}</div>
+                        <div class="user-vote-info">${userRating.image ? `<span class=\"user-vote\">Your rating: ${userRating.image} stars</span> <button class=\"undo-btn\" onclick=\"undoVote('${escapedName}', 'image')\">↩️ Undo</button>` : '<span class="user-vote">Click stars to rate</span>'}</div>
                     </div>
                     <div class="vote-category">
                         <h4>Rule Design</h4>
                         <div class="rating-container">
                             <div class="star-rating" data-power="${power.name}" data-type="rules">${generateStars(5, userRating.rules)}</div>
-                            <div class="average-display">${averages.rules.count>0 ? `★ ${averages.rules.avg.toFixed(1)} (${averages.rules.count})` : 'No ratings yet'}</div>
+                            <div class="average-display">${averages.rules.count>0 ? `★ ${averages.rules.avg.toFixed(1)} (${averages.rules.count} votes)` : 'No ratings yet'}</div>
                         </div>
-                        <div class="user-vote-info">${userRating.rules ? `<span class=\"user-vote\">Your rating: ${userRating.rules} stars</span>` : '<span class="user-vote">Click stars to rate</span>'} ${userRating.rules ? `<button class=\"undo-btn\" onclick=\"undoVote('${power.name}', 'rules')\">↩️ Undo</button>` : ''}</div>
+                        <div class="user-vote-info">${userRating.rules ? `<span class=\"user-vote\">Your rating: ${userRating.rules} stars</span> <button class=\"undo-btn\" onclick=\"undoVote('${escapedName}', 'rules')\">↩️ Undo</button>` : '<span class="user-vote">Click stars to rate</span>'}</div>
                     </div>
                 </div>`;
-            const existingCard = container.querySelector(`[data-power="${power.name}"]`); if (existingCard) { existingCard.replaceWith(powerCard); } else { powerCard.setAttribute('data-power', power.name); container.appendChild(powerCard); }
-            powerCard.querySelectorAll('.star-rating').forEach(rating => { const pName = rating.dataset.power; const vType = rating.dataset.type; const userHasVoted = userVotes[pName] && userVotes[pName][vType] !== null; rating.querySelectorAll('.star').forEach((star, index) => { if (!userHasVoted) { star.addEventListener('mouseenter', () => highlightStars(rating, index + 1)); star.addEventListener('mouseleave', () => clearHighlight(rating)); star.addEventListener('click', () => castVote(pName, vType, index + 1)); } }); });
+            container.appendChild(powerCard);
+            setTimeout(() => { addStarEventListeners(powerCard, powerName); }, 10);
         }
 
+        function addStarEventListeners(powerCard, powerName) { powerCard.querySelectorAll('.star-rating').forEach(rating => { const voteType = rating.dataset.type; const userHasVoted = userVotes[powerName] && userVotes[powerName][voteType] !== null; rating.querySelectorAll('.star').forEach((star, index) => { if (!userHasVoted) { const newStar = star.cloneNode(true); star.parentNode.replaceChild(newStar, star); newStar.addEventListener('mouseenter', () => highlightStars(rating, index + 1)); newStar.addEventListener('mouseleave', () => clearHighlight(rating)); newStar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); castVote(powerName, voteType, index + 1); }); } }); }); }
+
         function generateStars(count, userRating) { let stars=''; for (let i=1;i<=count;i++){ const isActive = userRating && i<=userRating; const isDisabled = userRating!==null; stars += `<span class="star ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}" data-rating="${i}">★</span>`;} return stars; }
-        function highlightStars(container, rating) { container.querySelectorAll('.star').forEach((star, idx)=>{ star.classList.toggle('hover', idx < rating); }); }
-        function clearHighlight(container) { container.querySelectorAll('.star').forEach(star=>{ star.classList.remove('hover'); }); }
-        function openImageModal(imageSrc, altText) { const modal=document.getElementById('imageModal'); const modalImg=document.getElementById('modalImage'); modal.style.display='block'; modalImg.src=imageSrc; modalImg.alt=altText; }
-        document.getElementById('imageModal').addEventListener('click', function(){ this.style.display='none'; });
-        function showMessage(message, type){ const statusEl=document.getElementById('statusMessage'); statusEl.textContent=message; statusEl.className=`status-message status-${type}`; if(type==='success'){ setTimeout(()=>{ statusEl.style.opacity='0.7'; },2000);} }
+        function highlightStars(container, rating) { if (!container) return; container.querySelectorAll('.star').forEach((star, idx)=>{ if (idx < rating && !star.classList.contains('disabled')) star.classList.add('hover'); else star.classList.remove('hover'); }); }
+        function clearHighlight(container) { if (!container) return; container.querySelectorAll('.star').forEach(star=>{ star.classList.remove('hover'); }); }
+        function openImageModal(imageSrc, altText) { const modal=document.getElementById('imageModal'); const modalImg=document.getElementById('modalImage'); modal.style.display='block'; modalImg.src=imageSrc; modalImg.alt=altText; document.body.style.overflow='hidden'; }
+        document.getElementById('imageModal').addEventListener('click', function(e){ if(e.target===this){ this.style.display='none'; document.body.style.overflow='auto'; } });
+        document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ const modal=document.getElementById('imageModal'); if(modal.style.display==='block'){ modal.style.display='none'; document.body.style.overflow='auto'; } } });
+        function showMessage(message, type){ const statusEl=document.getElementById('statusMessage'); statusEl.textContent=message; statusEl.className=`status-message status-${type}`; if(type==='success'){ setTimeout(()=>{ statusEl.style.opacity='0.7'; },3000);} if(type==='error'){ setTimeout(()=>{ statusEl.style.opacity='0.5'; },5000);} }
         document.addEventListener('DOMContentLoaded', initApp);
+        window.debugVotes = function(){ console.log('Current user votes:', userVotes); console.log('Current averages:', voteAverages); console.log('Session ID:', sessionId); };
     </script>
 </body>
 </html>
